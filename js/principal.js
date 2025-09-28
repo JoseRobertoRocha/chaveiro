@@ -1,17 +1,8 @@
-/**
-* Template Name: Knight
-* Template URL: https://bootstrapmade.com/knight-free-bootstrap-theme/
-* Updated: Oct 16 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
+
 
 (function() {
   "use strict";
 
-  /**
-   * Apply .scrolled class to the body as the page is scrolled down
-   */
   function toggleScrolled() {
     const selectBody = document.querySelector('body');
     const selectHeader = document.querySelector('#header');
@@ -22,9 +13,7 @@
   document.addEventListener('scroll', toggleScrolled);
   window.addEventListener('load', toggleScrolled);
 
-  /**
-   * Mobile nav toggle
-   */
+
   const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
 
   function mobileNavToogle() {
@@ -36,9 +25,7 @@
     mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
   }
 
-  /**
-   * Hide mobile nav on same-page/hash links
-   */
+
   document.querySelectorAll('#navmenu a').forEach(navmenu => {
     navmenu.addEventListener('click', () => {
       if (document.querySelector('.mobile-nav-active')) {
@@ -48,9 +35,7 @@
 
   });
 
-  /**
-   * Toggle mobile nav dropdowns
-   */
+
   document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
     navmenu.addEventListener('click', function(e) {
       e.preventDefault();
@@ -60,9 +45,7 @@
     });
   });
 
-  /**
-   * Preloader
-   */
+
   const preloader = document.querySelector('#preloader');
   if (preloader) {
     window.addEventListener('load', () => {
@@ -77,9 +60,7 @@
     });
   }
 
-  /**
-   * Scroll top button
-   */
+
   let scrollTop = document.querySelector('.scroll-top');
 
   function toggleScrollTop() {
@@ -98,9 +79,7 @@
   window.addEventListener('load', toggleScrollTop);
   document.addEventListener('scroll', toggleScrollTop);
 
-  /**
-   * Animation on scroll function and init
-   */
+
   function aosInit() {
     AOS.init({
       duration: 600,
@@ -111,9 +90,6 @@
   }
   window.addEventListener('load', aosInit);
 
-  /**
-   * Init swiper sliders
-   */
   function initSwiper() {
     document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
       let config = JSON.parse(
@@ -130,16 +106,12 @@
 
   window.addEventListener("load", initSwiper);
 
-  /**
-   * Initiate glightbox
-   */
+ 
   const glightbox = GLightbox({
     selector: '.glightbox'
   });
 
-  /**
-   * Init isotope layout and filters
-   */
+
   document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
     let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
     let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
@@ -170,18 +142,14 @@
 
   });
 
-  /**
-   * Frequently Asked Questions Toggle
-   */
+
   document.querySelectorAll('.faq-item h3, .faq-item .faq-toggle').forEach((faqItem) => {
     faqItem.addEventListener('click', () => {
       faqItem.parentNode.classList.toggle('faq-active');
     });
   });
 
-  /**
-   * Correct scrolling position upon page load for URLs containing hash links.
-   */
+
   window.addEventListener('load', function(e) {
     if (window.location.hash) {
       if (document.querySelector(window.location.hash)) {
@@ -197,9 +165,7 @@
     }
   });
 
-  /**
-   * Navmenu Scrollspy
-   */
+
   let navmenulinks = document.querySelectorAll('.navmenu a');
 
   function navmenuScrollspy() {
@@ -219,9 +185,7 @@
   window.addEventListener('load', navmenuScrollspy);
   document.addEventListener('scroll', navmenuScrollspy);
 
-  /**
-   * Controle de Horário de Atendimento
-   */
+
   function verificarHorarioAtendimento() {
     const agora = new Date();
     const diaAtual = agora.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
@@ -296,7 +260,9 @@
       justify-content: center;
       align-items: center;
       z-index: 10000;
-      animation: fadeIn 0.3s ease-out;
+      animation: fadeIn 0.4s ease-out;
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
     `;
 
     const popupContent = document.createElement('div');
@@ -304,11 +270,14 @@
       background: white;
       padding: 30px;
       border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
       text-align: center;
-      max-width: 400px;
+      max-width: 420px;
       width: 90%;
-      animation: slideIn 0.3s ease-out;
+      animation: slideIn 0.4s ease-out;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      will-change: transform, opacity;
     `;
 
     const corStatus = status.aberto ? '#28a745' : '#dc3545';
@@ -353,8 +322,14 @@
         to { opacity: 1; }
       }
       @keyframes slideIn {
-        from { transform: translateY(-50px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
+        from { transform: translateY(-30px) scale(0.9); opacity: 0; }
+        to { transform: translateY(0) scale(1); opacity: 1; }
+      }
+      #horario-popup {
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
       }
     `;
     document.head.appendChild(style);
@@ -362,29 +337,38 @@
     popup.appendChild(popupContent);
     document.body.appendChild(popup);
 
-    // Fechar popup
-    document.getElementById('fechar-popup').addEventListener('click', function() {
-      popup.style.animation = 'fadeOut 0.3s ease-out';
+    // Função para fechar popup de forma suave
+    function fecharPopup() {
+      popup.style.animation = 'fadeOut 0.3s ease-out forwards';
+      popup.style.pointerEvents = 'none'; // Previne cliques duplos
       setTimeout(() => {
-        document.body.removeChild(popup);
+        if (document.body.contains(popup)) {
+          document.body.removeChild(popup);
+        }
       }, 300);
+    }
+
+    // Fechar popup
+    document.getElementById('fechar-popup').addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      fecharPopup();
     });
 
     // Fechar ao clicar fora do popup
     popup.addEventListener('click', function(e) {
       if (e.target === popup) {
-        popup.style.animation = 'fadeOut 0.3s ease-out';
-        setTimeout(() => {
-          document.body.removeChild(popup);
-        }, 300);
+        e.preventDefault();
+        e.stopPropagation();
+        fecharPopup();
       }
     });
 
     // Adicionar animação de saída
     style.textContent += `
       @keyframes fadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; }
+        from { opacity: 1; transform: scale(1); }
+        to { opacity: 0; transform: scale(0.95); }
       }
     `;
   }
