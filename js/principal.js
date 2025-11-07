@@ -222,7 +222,7 @@ function verificarHorarioAtendimento() {
   // Segunda a Sexta (1-5)
   if (diaAtual >= 1 && diaAtual <= 5) {
     // 🕛 Horário de almoço: 12h às 14h
-    if (horaCompleta >= 15 && horaCompleta < 16) {
+    if (horaCompleta >= 12 && horaCompleta < 14) {
       statusAtendimento.aberto = false;
       statusAtendimento.mensagem = '⏸️ Estamos em horário de almoço 🍽️';
       statusAtendimento.proximoAtendimento = 'Voltaremos às 14h00';
