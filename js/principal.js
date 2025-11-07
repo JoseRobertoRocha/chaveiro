@@ -25,7 +25,6 @@
     mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
   }
 
-
   document.querySelectorAll('#navmenu a').forEach(navmenu => {
     navmenu.addEventListener('click', () => {
       if (document.querySelector('.mobile-nav-active')) {
@@ -35,7 +34,7 @@
 
   });
 
-
+ 
   document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
     navmenu.addEventListener('click', function(e) {
       e.preventDefault();
@@ -45,7 +44,9 @@
     });
   });
 
-
+  /**
+   * Preloader
+   */
   const preloader = document.querySelector('#preloader');
   if (preloader) {
     window.addEventListener('load', () => {
@@ -60,7 +61,9 @@
     });
   }
 
-
+  /**
+   * Scroll top button
+   */
   let scrollTop = document.querySelector('.scroll-top');
 
   function toggleScrollTop() {
@@ -79,7 +82,9 @@
   window.addEventListener('load', toggleScrollTop);
   document.addEventListener('scroll', toggleScrollTop);
 
-
+  /**
+   * Animation on scroll function and init
+   */
   function aosInit() {
     AOS.init({
       duration: 600,
@@ -90,6 +95,9 @@
   }
   window.addEventListener('load', aosInit);
 
+  /**
+   * Init swiper sliders
+   */
   function initSwiper() {
     document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
       let config = JSON.parse(
@@ -106,12 +114,16 @@
 
   window.addEventListener("load", initSwiper);
 
- 
+  /**
+   * Initiate glightbox
+   */
   const glightbox = GLightbox({
     selector: '.glightbox'
   });
 
-
+  /**
+   * Init isotope layout and filters
+   */
   document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
     let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
     let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
@@ -142,14 +154,18 @@
 
   });
 
-
+  /**
+   * Frequently Asked Questions Toggle
+   */
   document.querySelectorAll('.faq-item h3, .faq-item .faq-toggle').forEach((faqItem) => {
     faqItem.addEventListener('click', () => {
       faqItem.parentNode.classList.toggle('faq-active');
     });
   });
 
-
+  /**
+   * Correct scrolling position upon page load for URLs containing hash links.
+   */
   window.addEventListener('load', function(e) {
     if (window.location.hash) {
       if (document.querySelector(window.location.hash)) {
@@ -165,7 +181,9 @@
     }
   });
 
-
+  /**
+   * Navmenu Scrollspy
+   */
   let navmenulinks = document.querySelectorAll('.navmenu a');
 
   function navmenuScrollspy() {
@@ -185,63 +203,71 @@
   window.addEventListener('load', navmenuScrollspy);
   document.addEventListener('scroll', navmenuScrollspy);
 
+/**
+ * Controle de Horário de Atendimento
+ */
+function verificarHorarioAtendimento() {
+  const agora = new Date();
+  const diaAtual = agora.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+  const horaAtual = agora.getHours();
+  const minutoAtual = agora.getMinutes();
+  const horaCompleta = horaAtual + (minutoAtual / 60);
 
-  function verificarHorarioAtendimento() {
-    const agora = new Date();
-    const diaAtual = agora.getDay(); // 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
-    const horaAtual = agora.getHours();
-    const minutoAtual = agora.getMinutes();
-    const horaCompleta = horaAtual + (minutoAtual / 60);
+  let statusAtendimento = {
+    aberto: false,
+    mensagem: '',
+    proximoAtendimento: ''
+  };
 
-    let statusAtendimento = {
-      aberto: false,
-      mensagem: '',
-      proximoAtendimento: ''
-    };
-
-    // Segunda a Sexta (1-5): 08h às 18h
-    if (diaAtual >= 1 && diaAtual <= 5) {
-      if (horaCompleta >= 8 && horaCompleta < 18) {
-        statusAtendimento.aberto = true;
-        statusAtendimento.mensagem = '🟢 Estamos ABERTOS!';
-        statusAtendimento.proximoAtendimento = `Atendimento até às 18h00`;
-      } else {
-        statusAtendimento.aberto = false;
-        statusAtendimento.mensagem = '🔴 Estamos FECHADOS';
-        if (horaCompleta < 8) {
-          statusAtendimento.proximoAtendimento = 'Abriremos hoje às 08h00';
-        } else {
-          const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-          const proximoDia = diaAtual === 5 ? 'Sábado às 08h00' : 'amanhã às 08h00';
-          statusAtendimento.proximoAtendimento = `Abriremos ${proximoDia}`;
-        }
-      }
+  // Segunda a Sexta (1-5)
+  if (diaAtual >= 1 && diaAtual <= 5) {
+    // 🕛 Horário de almoço: 12h às 14h
+    if (horaCompleta >= 15 && horaCompleta < 16) {
+      statusAtendimento.aberto = false;
+      statusAtendimento.mensagem = '⏸️ Estamos em horário de almoço 🍽️';
+      statusAtendimento.proximoAtendimento = 'Voltaremos às 14h00';
     }
-    // Sábado (6): 08h às 12h
-    else if (diaAtual === 6) {
-      if (horaCompleta >= 8 && horaCompleta < 12) {
-        statusAtendimento.aberto = true;
-        statusAtendimento.mensagem = '🟢 Estamos ABERTOS!';
-        statusAtendimento.proximoAtendimento = `Atendimento até às 12h00`;
-      } else {
-        statusAtendimento.aberto = false;
-        statusAtendimento.mensagem = '🔴 Estamos FECHADOS';
-        if (horaCompleta < 8) {
-          statusAtendimento.proximoAtendimento = 'Abriremos hoje às 08h00';
-        } else {
-          statusAtendimento.proximoAtendimento = 'Abriremos na Segunda-feira às 08h00';
-        }
-      }
-    }
-    // Domingo (0): Fechado
-    else {
+    // Horário de funcionamento normal: 08h às 18h (exceto horário de almoço)
+    else if (horaCompleta >= 8 && horaCompleta < 18) {
+      statusAtendimento.aberto = true;
+      statusAtendimento.mensagem = '🟢 Estamos ABERTOS!';
+      statusAtendimento.proximoAtendimento = `Atendimento até às 18h00`;
+    } else {
       statusAtendimento.aberto = false;
       statusAtendimento.mensagem = '🔴 Estamos FECHADOS';
-      statusAtendimento.proximoAtendimento = 'Abriremos na Segunda-feira às 08h00';
+      if (horaCompleta < 8) {
+        statusAtendimento.proximoAtendimento = 'Abriremos hoje às 08h00';
+      } else {
+        const proximoDia = diaAtual === 5 ? 'Sábado às 08h00' : 'amanhã às 08h00';
+        statusAtendimento.proximoAtendimento = `Abriremos ${proximoDia}`;
+      }
     }
-
-    return statusAtendimento;
   }
+  // Sábado (6): 08h às 12h
+  else if (diaAtual === 6) {
+    if (horaCompleta >= 8 && horaCompleta < 12) {
+      statusAtendimento.aberto = true;
+      statusAtendimento.mensagem = '🟢 Estamos ABERTOS!';
+      statusAtendimento.proximoAtendimento = `Atendimento até às 12h00`;
+    } else {
+      statusAtendimento.aberto = false;
+      statusAtendimento.mensagem = '🔴 Estamos FECHADOS';
+      if (horaCompleta < 8) {
+        statusAtendimento.proximoAtendimento = 'Abriremos hoje às 08h00';
+      } else {
+        statusAtendimento.proximoAtendimento = 'Abriremos na Segunda-feira às 08h00';
+      }
+    }
+  }
+  // Domingo (0): Fechado
+  else {
+    statusAtendimento.aberto = false;
+    statusAtendimento.mensagem = '🔴 Estamos FECHADOS';
+    statusAtendimento.proximoAtendimento = 'Abriremos na Segunda-feira às 08h00';
+  }
+
+  return statusAtendimento;
+}
 
   function mostrarPopupAtendimento() {
     const status = verificarHorarioAtendimento();
